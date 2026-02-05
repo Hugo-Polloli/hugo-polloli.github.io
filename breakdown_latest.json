@@ -1,0 +1,370 @@
+{
+  "collected_at_utc": "2026-02-05T09:38:51.937909Z",
+  "commit_sha": "f055f39345ab85d747c3ce348e21274ee2870632",
+  "conformance_suite_revision": "08f929ba70397b5c898a55bbb73c8b4e2e8e4fbb",
+  "groups": [
+    {
+      "group": "exceptions",
+      "href": "https://typing.readthedocs.io/en/latest/spec/exceptions.html",
+      "metrics": {
+        "f1": 0.0,
+        "false_negatives": 0,
+        "false_positives": 2,
+        "precision": 0.0,
+        "precision_denom": 2,
+        "recall": 0.0,
+        "recall_denom": 0,
+        "total_diagnostics": 2,
+        "true_positives": 0
+      },
+      "name": "Exceptions",
+      "test_files": 1
+    },
+    {
+      "group": "constructors",
+      "href": "https://typing.readthedocs.io/en/latest/spec/constructors.html",
+      "metrics": {
+        "f1": 0.5675675675675675,
+        "false_negatives": 10,
+        "false_positives": 22,
+        "precision": 0.4883720930232558,
+        "precision_denom": 43,
+        "recall": 0.6774193548387096,
+        "recall_denom": 31,
+        "total_diagnostics": 43,
+        "true_positives": 21
+      },
+      "name": "Constructors",
+      "test_files": 6
+    },
+    {
+      "group": "specialtypes",
+      "href": "https://typing.readthedocs.io/en/latest/spec/special-types.html",
+      "metrics": {
+        "f1": 0.6046511627906976,
+        "false_negatives": 3,
+        "false_positives": 14,
+        "precision": 0.48148148148148145,
+        "precision_denom": 27,
+        "recall": 0.8125,
+        "recall_denom": 16,
+        "total_diagnostics": 27,
+        "true_positives": 13
+      },
+      "name": "Special types in annotations",
+      "test_files": 5
+    },
+    {
+      "group": "generics",
+      "href": "https://typing.readthedocs.io/en/latest/spec/generics.html",
+      "metrics": {
+        "f1": 0.6112469437652812,
+        "false_negatives": 101,
+        "false_positives": 58,
+        "precision": 0.6830601092896175,
+        "precision_denom": 183,
+        "recall": 0.5530973451327433,
+        "recall_denom": 226,
+        "total_diagnostics": 183,
+        "true_positives": 125
+      },
+      "name": "Generics",
+      "test_files": 30
+    },
+    {
+      "group": "typeddicts",
+      "href": "https://typing.readthedocs.io/en/latest/spec/typeddict.html",
+      "metrics": {
+        "f1": 0.659217877094972,
+        "false_negatives": 38,
+        "false_positives": 23,
+        "precision": 0.7195121951219512,
+        "precision_denom": 82,
+        "recall": 0.6082474226804123,
+        "recall_denom": 97,
+        "total_diagnostics": 82,
+        "true_positives": 59
+      },
+      "name": "Typed dictionaries",
+      "test_files": 14
+    },
+    {
+      "group": "protocols",
+      "href": "https://typing.readthedocs.io/en/latest/spec/protocol.html",
+      "metrics": {
+        "f1": 0.6608695652173913,
+        "false_negatives": 35,
+        "false_positives": 4,
+        "precision": 0.9047619047619048,
+        "precision_denom": 42,
+        "recall": 0.5205479452054794,
+        "recall_denom": 73,
+        "total_diagnostics": 42,
+        "true_positives": 38
+      },
+      "name": "Protocols",
+      "test_files": 11
+    },
+    {
+      "group": "directives",
+      "href": "https://typing.readthedocs.io/en/latest/spec/directives.html",
+      "metrics": {
+        "f1": 0.711864406779661,
+        "false_negatives": 12,
+        "false_positives": 5,
+        "precision": 0.8076923076923077,
+        "precision_denom": 26,
+        "recall": 0.6363636363636364,
+        "recall_denom": 33,
+        "total_diagnostics": 26,
+        "true_positives": 21
+      },
+      "name": "Type checker directives",
+      "test_files": 10
+    },
+    {
+      "group": "dataclasses",
+      "href": "https://typing.readthedocs.io/en/latest/spec/dataclasses.html",
+      "metrics": {
+        "f1": 0.8268156424581006,
+        "false_negatives": 10,
+        "false_positives": 21,
+        "precision": 0.7789473684210526,
+        "precision_denom": 95,
+        "recall": 0.8809523809523809,
+        "recall_denom": 84,
+        "total_diagnostics": 95,
+        "true_positives": 74
+      },
+      "name": "Dataclasses",
+      "test_files": 16
+    },
+    {
+      "group": "aliases",
+      "href": "https://typing.readthedocs.io/en/latest/spec/aliases.html",
+      "metrics": {
+        "f1": 0.8288288288288288,
+        "false_negatives": 34,
+        "false_positives": 4,
+        "precision": 0.9583333333333334,
+        "precision_denom": 96,
+        "recall": 0.7301587301587301,
+        "recall_denom": 126,
+        "total_diagnostics": 96,
+        "true_positives": 92
+      },
+      "name": "Type aliases",
+      "test_files": 7
+    },
+    {
+      "group": "classes",
+      "href": "https://typing.readthedocs.io/en/latest/spec/class-compat.html",
+      "metrics": {
+        "f1": 0.85,
+        "false_negatives": 6,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 17,
+        "recall": 0.7391304347826086,
+        "recall_denom": 23,
+        "total_diagnostics": 17,
+        "true_positives": 17
+      },
+      "name": "Class type compatibility",
+      "test_files": 2
+    },
+    {
+      "group": "annotations",
+      "href": "https://typing.readthedocs.io/en/latest/spec/annotations.html",
+      "metrics": {
+        "f1": 0.851063829787234,
+        "false_negatives": 10,
+        "false_positives": 4,
+        "precision": 0.9090909090909091,
+        "precision_denom": 44,
+        "recall": 0.8,
+        "recall_denom": 50,
+        "total_diagnostics": 44,
+        "true_positives": 40
+      },
+      "name": "Type annotations",
+      "test_files": 5
+    },
+    {
+      "group": "callables",
+      "href": "https://typing.readthedocs.io/en/latest/spec/callables.html",
+      "metrics": {
+        "f1": 0.8571428571428571,
+        "false_negatives": 17,
+        "false_positives": 5,
+        "precision": 0.9295774647887324,
+        "precision_denom": 71,
+        "recall": 0.7951807228915663,
+        "recall_denom": 83,
+        "total_diagnostics": 71,
+        "true_positives": 66
+      },
+      "name": "Callables",
+      "test_files": 4
+    },
+    {
+      "group": "historical",
+      "href": "https://typing.readthedocs.io/en/latest/spec/historical.html",
+      "metrics": {
+        "f1": 0.8888888888888888,
+        "false_negatives": 0,
+        "false_positives": 1,
+        "precision": 0.8,
+        "precision_denom": 5,
+        "recall": 1.0,
+        "recall_denom": 4,
+        "total_diagnostics": 5,
+        "true_positives": 4
+      },
+      "name": "Historical and deprecated features",
+      "test_files": 1
+    },
+    {
+      "group": "enums",
+      "href": "https://typing.readthedocs.io/en/latest/spec/enums.html",
+      "metrics": {
+        "f1": 0.9,
+        "false_negatives": 3,
+        "false_positives": 1,
+        "precision": 0.9473684210526315,
+        "precision_denom": 19,
+        "recall": 0.8571428571428571,
+        "recall_denom": 21,
+        "total_diagnostics": 19,
+        "true_positives": 18
+      },
+      "name": "Enumerations",
+      "test_files": 6
+    },
+    {
+      "group": "literals",
+      "href": "https://typing.readthedocs.io/en/latest/spec/literal.html",
+      "metrics": {
+        "f1": 0.9210526315789473,
+        "false_negatives": 0,
+        "false_positives": 6,
+        "precision": 0.8536585365853658,
+        "precision_denom": 41,
+        "recall": 1.0,
+        "recall_denom": 35,
+        "total_diagnostics": 41,
+        "true_positives": 35
+      },
+      "name": "Literals",
+      "test_files": 4
+    },
+    {
+      "group": "qualifiers",
+      "href": "https://typing.readthedocs.io/en/latest/spec/qualifiers.html",
+      "metrics": {
+        "f1": 0.9391304347826087,
+        "false_negatives": 7,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 54,
+        "recall": 0.8852459016393442,
+        "recall_denom": 61,
+        "total_diagnostics": 54,
+        "true_positives": 54
+      },
+      "name": "Type qualifiers",
+      "test_files": 3
+    },
+    {
+      "group": "overloads",
+      "href": "https://typing.readthedocs.io/en/latest/spec/overload.html",
+      "metrics": {
+        "f1": 0.9615384615384616,
+        "false_negatives": 2,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 25,
+        "recall": 0.9259259259259259,
+        "recall_denom": 27,
+        "total_diagnostics": 25,
+        "true_positives": 25
+      },
+      "name": "Overloads",
+      "test_files": 5
+    },
+    {
+      "group": "namedtuples",
+      "href": "https://typing.readthedocs.io/en/latest/spec/namedtuples.html",
+      "metrics": {
+        "f1": 0.972972972972973,
+        "false_negatives": 2,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 36,
+        "recall": 0.9473684210526315,
+        "recall_denom": 38,
+        "total_diagnostics": 36,
+        "true_positives": 36
+      },
+      "name": "Named tuples",
+      "test_files": 4
+    },
+    {
+      "group": "tuples",
+      "href": "https://typing.readthedocs.io/en/latest/spec/tuples.html",
+      "metrics": {
+        "f1": 0.9743589743589743,
+        "false_negatives": 2,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 38,
+        "recall": 0.95,
+        "recall_denom": 40,
+        "total_diagnostics": 38,
+        "true_positives": 38
+      },
+      "name": "Tuples",
+      "test_files": 3
+    },
+    {
+      "group": "narrowing",
+      "href": "https://typing.readthedocs.io/en/latest/spec/narrowing.html",
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "precision": 1.0,
+        "precision_denom": 13,
+        "recall": 1.0,
+        "recall_denom": 13,
+        "total_diagnostics": 13,
+        "true_positives": 13
+      },
+      "name": "Type narrowing",
+      "test_files": 2
+    }
+  ],
+  "mode": "breakdown_latest",
+  "overall": {
+    "metrics": {
+      "f1": 0.7735294117647059,
+      "false_negatives": 292,
+      "false_positives": 170,
+      "precision": 0.8227320125130344,
+      "precision_denom": 959,
+      "recall": 0.7298797409805735,
+      "recall_denom": 1081,
+      "total_diagnostics": 959,
+      "true_positives": 789
+    }
+  },
+  "python_version": "3.12",
+  "revision_committed_at_utc": "2026-02-04T20:31:08Z",
+  "run_seconds": 0.09270460100378841,
+  "sample_date": "2026-02-04",
+  "schema_version": 1,
+  "skipped_empty_groups": [
+    "concepts",
+    "distribution"
+  ]
+}

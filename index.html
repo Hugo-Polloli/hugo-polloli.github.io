@@ -47,6 +47,48 @@
           </div>
           <div id="chart_runtime" style="height: 320px"></div>
         </div>
+
+        <div class="rounded-2xl bg-slate-900/40 p-4 ring-1 ring-slate-800">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="text-sm text-slate-200">Breakdown by test group</div>
+              <div id="breakdown_meta" class="mt-1 text-xs text-slate-400"></div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <a
+                class="text-sm text-sky-300 hover:text-sky-200 underline"
+                href="./breakdown_latest.json"
+              >
+                Breakdown (JSON)
+              </a>
+              <input
+                id="breakdownFilter"
+                class="w-56 rounded-lg bg-slate-950/50 px-3 py-1.5 text-sm text-slate-100 ring-1 ring-slate-700 placeholder:text-slate-500"
+                placeholder="Filter groups…"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-slate-300">
+                <tr class="border-b border-slate-800">
+                  <th class="py-2 pr-4">Group</th>
+                  <th class="py-2 pr-4">F1</th>
+                  <th class="py-2 pr-4">Precision</th>
+                  <th class="py-2 pr-4">Recall</th>
+                  <th class="py-2 pr-4">TP</th>
+                  <th class="py-2 pr-4">FP</th>
+                  <th class="py-2 pr-4">FN</th>
+                  <th class="py-2 pr-4">Total</th>
+                  <th class="py-2 pr-4">Files</th>
+                </tr>
+              </thead>
+              <tbody id="breakdownBody" class="text-slate-200"></tbody>
+            </table>
+          </div>
+          <div id="breakdown_empty" class="mt-3 hidden text-sm text-slate-400"></div>
+        </div>
       </section>
 
       <footer class="mt-10 text-xs text-slate-500">
@@ -57,6 +99,7 @@
 
     <script>
       const DATA_URL = "./typing_conformance.json";
+      const BREAKDOWN_URL = "./breakdown_latest.json";
       const COMMIT_REPO_URL = "https://github.com/astral-sh/ruff";
 
       function pct(value) {
@@ -181,6 +224,75 @@
           showMarkers = !showMarkers;
           await Plotly.restyle("chart_metrics", { mode: mode() });
         });
+
+        // Breakdown table (optional)
+        try {
+          const breakdownResponse = await fetch(BREAKDOWN_URL, { cache: "no-store" });
+          if (!breakdownResponse.ok) {
+            throw new Error(`${breakdownResponse.status} ${breakdownResponse.statusText}`);
+          }
+          const breakdown = await breakdownResponse.json();
+
+          const meta = document.getElementById("breakdown_meta");
+          const suite = (breakdown.conformance_suite_revision ?? "").slice(0, 10);
+          const sha = (breakdown.commit_sha ?? "").slice(0, 10);
+          meta.textContent = `${breakdown.sample_date} • commit ${sha}… • suite ${suite}… • ty check ${breakdown.run_seconds.toFixed(
+            2
+          )}s`;
+
+          const rows = breakdown.groups ?? [];
+          const tbody = document.getElementById("breakdownBody");
+          const empty = document.getElementById("breakdown_empty");
+          const filter = document.getElementById("breakdownFilter");
+
+          const fmtPct = (x, denom) => (denom > 0 ? `${(x * 100).toFixed(2)}%` : "—");
+          const fmtNum = (x) => String(x ?? 0);
+
+          function render() {
+            const q = (filter.value ?? "").trim().toLowerCase();
+            const filtered = rows.filter((r) => {
+              const g = (r.group ?? "").toLowerCase();
+              const n = (r.name ?? "").toLowerCase();
+              return !q || g.includes(q) || n.includes(q);
+            });
+
+            tbody.innerHTML = "";
+            for (const r of filtered) {
+              const m = r.metrics;
+              const groupLabel = r.name ? `${r.group} — ${r.name}` : r.group;
+              const linkStart = r.href ? `<a class="text-sky-300 hover:text-sky-200 underline" href="${r.href}" target="_blank" rel="noopener noreferrer">` : "";
+              const linkEnd = r.href ? `</a>` : "";
+
+              const tr = document.createElement("tr");
+              tr.className = "border-b border-slate-900/60";
+              tr.innerHTML = `
+                <td class="py-2 pr-4 whitespace-nowrap">${linkStart}${groupLabel}${linkEnd}</td>
+                <td class="py-2 pr-4 font-medium">${fmtPct(m.f1, m.precision_denom + m.false_negatives)}</td>
+                <td class="py-2 pr-4">${fmtPct(m.precision, m.precision_denom)}</td>
+                <td class="py-2 pr-4">${fmtPct(m.recall, m.recall_denom)}</td>
+                <td class="py-2 pr-4">${fmtNum(m.true_positives)}</td>
+                <td class="py-2 pr-4">${fmtNum(m.false_positives)}</td>
+                <td class="py-2 pr-4">${fmtNum(m.false_negatives)}</td>
+                <td class="py-2 pr-4">${fmtNum(m.total_diagnostics)}</td>
+                <td class="py-2 pr-4">${fmtNum(r.test_files)}</td>
+              `;
+              tbody.appendChild(tr);
+            }
+
+            if (filtered.length === 0) {
+              empty.classList.remove("hidden");
+              empty.textContent = "No groups match the filter.";
+            } else {
+              empty.classList.add("hidden");
+            }
+          }
+
+          filter.addEventListener("input", render);
+          render();
+        } catch (e) {
+          const meta = document.getElementById("breakdown_meta");
+          meta.textContent = `No breakdown yet (${String(e)}). Add ${BREAKDOWN_URL} to enable this table.`;
+        }
       }
 
       main().catch((err) => {
@@ -190,4 +302,3 @@
     </script>
   </body>
 </html>
-
