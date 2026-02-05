@@ -12,6 +12,20 @@
         color-scheme: light;
       }
 
+      /* Make native title tooltips discoverable via a consistent visual hint. */
+      .has-tooltip {
+        text-decoration: underline dotted;
+        text-underline-offset: 3px;
+        cursor: help;
+      }
+      .tooltip-icon {
+        display: inline-block;
+        margin-left: 0.35rem;
+        font-weight: 700;
+        opacity: 0.8;
+        cursor: help;
+      }
+
       .col-highlight {
         background-color: rgba(15, 23, 42, 0.35);
       }
@@ -125,8 +139,36 @@
       <section class="mt-8 grid gap-6">
         <div class="rounded-2xl bg-slate-900/40 p-4 ring-1 ring-slate-800">
           <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="text-sm text-slate-200">Precision / Recall / F1</div>
-            <div class="text-xs text-slate-400">Tip: drag to zoom, double-click to reset</div>
+            <div>
+              <div class="text-sm text-slate-200">Precision / Recall / F1</div>
+              <details class="mt-2 text-xs text-slate-400">
+                <summary class="has-tooltip inline-flex items-center gap-2 text-slate-300">
+                  What do these metrics mean?
+                  <span class="tooltip-icon" title="Tap to expand.">ⓘ</span>
+                </summary>
+                <div class="mt-2 space-y-1 text-slate-400">
+                  <p>
+                    <span class="font-semibold text-slate-200">Precision</span>: when <code>ty</code>
+                    reports an error, how often is it an expected error in the conformance suite?
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">Recall</span>: of all expected errors
+                    in the conformance suite, how many did <code>ty</code> actually catch?
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">F1 score</span>: a single score that
+                    balances precision and recall (their harmonic mean).
+                  </p>
+                  <p class="text-slate-500">
+                    Note: these are conformance-suite metrics, not “ground truth” for all Python
+                    code.
+                  </p>
+                </div>
+              </details>
+            </div>
+            <div class="text-xs text-slate-400">
+              Tip: drag to zoom, double-click to reset • click a point to open the commit
+            </div>
           </div>
           <div id="chart_metrics" style="height: 440px"></div>
         </div>
@@ -144,6 +186,38 @@
             <div>
               <div class="text-sm text-slate-200">Breakdown by test group</div>
               <div id="breakdown_meta" class="mt-1 text-xs text-slate-400"></div>
+              <details class="mt-2 text-xs text-slate-400">
+                <summary class="has-tooltip inline-flex items-center gap-2 text-slate-300">
+                  What do the counts mean?
+                  <span class="tooltip-icon" title="Tap to expand.">ⓘ</span>
+                </summary>
+                <div class="mt-2 space-y-1 text-slate-400">
+                  <p>
+                    <span class="font-semibold text-slate-200">True positives</span>: expected errors
+                    that received a diagnostic (counted as diagnostics, not just locations).
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">False positives</span>: diagnostics
+                    that were not expected by the conformance suite.
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">False negatives</span>: expected error
+                    locations that did not receive any diagnostic.
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">Total</span>: total diagnostics emitted
+                    for this group.
+                  </p>
+                  <p>
+                    <span class="font-semibold text-slate-200">Files</span>: number of conformance
+                    test files in the group.
+                  </p>
+                  <p class="text-slate-500">
+                    Note: these are conformance-suite metrics, not “ground truth” for all Python
+                    code.
+                  </p>
+                </div>
+              </details>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <a
@@ -167,65 +241,56 @@
                   <th
                     data-col="0"
                     class="py-2 pr-4 text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="Test group (from typing conformance suite)"
                   >
-                    Group
+                    <span class="has-tooltip" title="Test group (from typing conformance suite)">Group</span>
                   </th>
                   <th
                     data-col="1"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="F1 score (2*TP / (2*TP + FP + FN))"
                   >
-                    F1
+                    <span class="has-tooltip" title="F1 score (harmonic mean of precision and recall)">F1 score</span>
                   </th>
                   <th
                     data-col="2"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="Precision (TP / (TP + FP))"
                   >
-                    Precision
+                    <span class="has-tooltip" title="Precision (TP / (TP + FP))">Precision</span>
                   </th>
                   <th
                     data-col="3"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="Recall (TP / (TP + FN))"
                   >
-                    Recall
+                    <span class="has-tooltip" title="Recall (TP / (TP + FN))">Recall</span>
                   </th>
                   <th
                     data-col="4"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="True positives"
                   >
-                    TP
+                    <span class="has-tooltip" title="True positives (TP)">True positives</span>
                   </th>
                   <th
                     data-col="5"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="False positives"
                   >
-                    FP
+                    <span class="has-tooltip" title="False positives (FP)">False positives</span>
                   </th>
                   <th
                     data-col="6"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="False negatives"
                   >
-                    FN
+                    <span class="has-tooltip" title="False negatives (FN)">False negatives</span>
                   </th>
                   <th
                     data-col="7"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="Total emitted diagnostics"
                   >
-                    Total
+                    <span class="has-tooltip" title="Total emitted diagnostics">Total</span>
                   </th>
                   <th
                     data-col="8"
                     class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
-                    title="Number of test files in this group"
                   >
-                    Files
+                    <span class="has-tooltip" title="Number of test files in this group">Files</span>
                   </th>
                 </tr>
               </thead>
