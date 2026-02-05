@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Typing conformance</title>
+    <meta name="color-scheme" content="dark" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <main class="mx-auto max-w-6xl px-6 py-10">
+      <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold tracking-tight">Typing conformance</h1>
+          <p id="subtitle" class="mt-1 text-sm text-slate-300"></p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <a
+            class="text-sm text-sky-300 hover:text-sky-200 underline"
+            href="./typing_conformance.json"
+          >
+            Data (JSON)
+          </a>
+          <button
+            id="toggleMarkers"
+            class="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-slate-100 ring-1 ring-slate-700 hover:bg-slate-750"
+          >
+            Toggle markers
+          </button>
+        </div>
+      </header>
+
+      <section class="mt-8 grid gap-6">
+        <div class="rounded-2xl bg-slate-900/40 p-4 ring-1 ring-slate-800">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="text-sm text-slate-200">Precision / Recall / F1</div>
+            <div class="text-xs text-slate-400">Tip: drag to zoom, double-click to reset</div>
+          </div>
+          <div id="chart_metrics" style="height: 440px"></div>
+        </div>
+
+        <div class="rounded-2xl bg-slate-900/40 p-4 ring-1 ring-slate-800">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="text-sm text-slate-200">ty check runtime (seconds)</div>
+            <div class="text-xs text-slate-400">Click a point to open the commit</div>
+          </div>
+          <div id="chart_runtime" style="height: 320px"></div>
+        </div>
+      </section>
+
+      <footer class="mt-10 text-xs text-slate-500">
+        Generated from <code class="text-slate-400">typing_conformance.json</code>. Charts are
+        interactive via Plotly.
+      </footer>
+    </main>
+
+    <script>
+      const DATA_URL = "./typing_conformance.json";
+      const COMMIT_REPO_URL = "https://github.com/astral-sh/ruff";
+
+      function pct(value) {
+        return value * 100;
+      }
+
+      function fmtPct(value) {
+        return `${value.toFixed(2)}%`;
+      }
+
+      function baseLayout() {
+        return {
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+          font: { color: "#e2e8f0" },
+          margin: { l: 55, r: 20, t: 10, b: 40 },
+          xaxis: { gridcolor: "#1f2937", tickcolor: "#334155" },
+          yaxis: { gridcolor: "#1f2937", tickcolor: "#334155" },
+          legend: { orientation: "h", y: 1.13, x: 0 },
+        };
+      }
+
+      function hoverPct(label) {
+        return (
+          `<b>${label}</b>: %{y:.2f}%<br>` +
+          `date: %{x}<br>` +
+          `commit: %{customdata}<extra></extra>`
+        );
+      }
+
+      async function main() {
+        const response = await fetch(DATA_URL, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Failed to load ${DATA_URL}: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+
+        const dates = data.map((d) => d.sample_date);
+        const sha10 = data.map((d) => (d.commit_sha ?? "").slice(0, 10));
+        const commitUrl = data.map((d) =>
+          d.commit_sha ? `${COMMIT_REPO_URL}/commit/${d.commit_sha}` : null
+        );
+
+        const precision = data.map((d) => pct(d.metrics.precision));
+        const recall = data.map((d) => pct(d.metrics.recall));
+        const f1 = data.map((d) => pct(d.metrics.f1));
+        const runSeconds = data.map((d) => d.run_seconds);
+
+        const suite = (data[0]?.conformance_suite_revision ?? "").slice(0, 10);
+        const first = dates[0];
+        const last = dates[dates.length - 1];
+        const latest = data[data.length - 1];
+        document.getElementById("subtitle").textContent =
+          `${first} → ${last} • ${data.length} samples • suite ${suite}… • latest F1 ${fmtPct(
+            pct(latest.metrics.f1)
+          )}`;
+
+        let showMarkers = false;
+        const mode = () => (showMarkers ? "lines+markers" : "lines");
+
+        const metricsTraces = [
+          {
+            x: dates,
+            y: precision,
+            name: "Precision",
+            mode: mode(),
+            customdata: sha10,
+            hovertemplate: hoverPct("Precision"),
+            line: { width: 2 },
+          },
+          {
+            x: dates,
+            y: recall,
+            name: "Recall",
+            mode: mode(),
+            customdata: sha10,
+            hovertemplate: hoverPct("Recall"),
+            line: { width: 2 },
+          },
+          {
+            x: dates,
+            y: f1,
+            name: "F1",
+            mode: mode(),
+            customdata: sha10,
+            hovertemplate: hoverPct("F1"),
+            line: { width: 2 },
+          },
+        ];
+
+        const metricsLayout = {
+          ...baseLayout(),
+          yaxis: { ...baseLayout().yaxis, ticksuffix: "%", rangemode: "tozero" },
+        };
+
+        await Plotly.newPlot("chart_metrics", metricsTraces, metricsLayout, { responsive: true });
+
+        const runtimeTraces = [
+          {
+            x: dates,
+            y: runSeconds,
+            name: "ty check",
+            mode: "lines+markers",
+            customdata: sha10,
+            hovertemplate:
+              "<b>ty check</b>: %{y:.2f}s<br>date: %{x}<br>commit: %{customdata}<extra></extra>",
+            line: { width: 2 },
+          },
+        ];
+        const runtimeLayout = { ...baseLayout(), yaxis: { ...baseLayout().yaxis, title: "seconds" } };
+        await Plotly.newPlot("chart_runtime", runtimeTraces, runtimeLayout, { responsive: true });
+
+        const openCommit = (ev) => {
+          const i = ev.points[0].pointIndex;
+          const url = commitUrl[i];
+          if (url) window.open(url, "_blank", "noopener,noreferrer");
+        };
+        document.getElementById("chart_metrics").on("plotly_click", openCommit);
+        document.getElementById("chart_runtime").on("plotly_click", openCommit);
+
+        document.getElementById("toggleMarkers").addEventListener("click", async () => {
+          showMarkers = !showMarkers;
+          await Plotly.restyle("chart_metrics", { mode: mode() });
+        });
+      }
+
+      main().catch((err) => {
+        console.error(err);
+        document.getElementById("subtitle").textContent = String(err);
+      });
+    </script>
+  </body>
+</html>
+
