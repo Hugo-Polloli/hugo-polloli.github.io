@@ -4,9 +4,93 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Typing conformance</title>
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+      html[data-theme="light"] {
+        color-scheme: light;
+      }
+
+      .col-highlight {
+        background-color: rgba(15, 23, 42, 0.35);
+      }
+      .row-highlight {
+        background-color: rgba(30, 41, 59, 0.35);
+      }
+      .cell-highlight {
+        color: #f8fafc;
+      }
+      .head-highlight {
+        color: #bae6fd;
+      }
+
+      html[data-theme="light"] body {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+      }
+
+      html[data-theme="light"] .text-slate-100 {
+        color: #0f172a !important;
+      }
+      html[data-theme="light"] .text-slate-200 {
+        color: #1e293b !important;
+      }
+      html[data-theme="light"] .text-slate-300 {
+        color: #334155 !important;
+      }
+      html[data-theme="light"] .text-slate-400,
+      html[data-theme="light"] .text-slate-500 {
+        color: #475569 !important;
+      }
+
+      html[data-theme="light"] .bg-slate-900\/40,
+      html[data-theme="light"] .bg-slate-900\/60 {
+        background-color: rgba(255, 255, 255, 0.92) !important;
+      }
+      html[data-theme="light"] .bg-slate-950\/50 {
+        background-color: rgba(241, 245, 249, 0.9) !important;
+      }
+      html[data-theme="light"] .bg-slate-800,
+      html[data-theme="light"] .bg-slate-800\/40 {
+        background-color: rgba(226, 232, 240, 0.8) !important;
+      }
+
+      html[data-theme="light"] .ring-slate-800,
+      html[data-theme="light"] .ring-slate-700 {
+        --tw-ring-color: #cbd5e1 !important;
+      }
+      html[data-theme="light"] .border-slate-800,
+      html[data-theme="light"] .border-slate-900\/60 {
+        border-color: #e2e8f0 !important;
+      }
+
+      html[data-theme="light"] .text-sky-300,
+      html[data-theme="light"] .text-sky-200 {
+        color: #2563eb !important;
+      }
+      html[data-theme="light"] .hover\:text-sky-200:hover,
+      html[data-theme="light"] .hover\:text-sky-300:hover {
+        color: #1d4ed8 !important;
+      }
+
+      html[data-theme="light"] .hover\:bg-slate-900\/30:hover {
+        background-color: rgba(226, 232, 240, 0.7) !important;
+      }
+
+      html[data-theme="light"] .col-highlight {
+        background-color: rgba(226, 232, 240, 0.85);
+      }
+      html[data-theme="light"] .row-highlight {
+        background-color: rgba(203, 213, 225, 0.55);
+      }
+      html[data-theme="light"] .cell-highlight {
+        color: #0f172a;
+      }
+      html[data-theme="light"] .head-highlight {
+        color: #1d4ed8;
+      }
+    </style>
   </head>
   <body class="bg-slate-950 text-slate-100">
     <main class="mx-auto max-w-6xl px-6 py-10">
@@ -27,6 +111,13 @@
             class="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-slate-100 ring-1 ring-slate-700 hover:bg-slate-750"
           >
             Toggle markers
+          </button>
+          <button
+            id="toggleTheme"
+            class="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-slate-100 ring-1 ring-slate-700 hover:bg-slate-750"
+            aria-label="Toggle light/dark theme"
+          >
+            Theme: Auto
           </button>
         </div>
       </header>
@@ -73,15 +164,69 @@
             <table class="w-full text-left text-sm">
               <thead class="text-slate-300">
                 <tr class="border-b border-slate-800">
-                  <th class="py-2 pr-4">Group</th>
-                  <th class="py-2 pr-4">F1</th>
-                  <th class="py-2 pr-4">Precision</th>
-                  <th class="py-2 pr-4">Recall</th>
-                  <th class="py-2 pr-4">TP</th>
-                  <th class="py-2 pr-4">FP</th>
-                  <th class="py-2 pr-4">FN</th>
-                  <th class="py-2 pr-4">Total</th>
-                  <th class="py-2 pr-4">Files</th>
+                  <th
+                    data-col="0"
+                    class="py-2 pr-4 text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="Test group (from typing conformance suite)"
+                  >
+                    Group
+                  </th>
+                  <th
+                    data-col="1"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="F1 score (2*TP / (2*TP + FP + FN))"
+                  >
+                    F1
+                  </th>
+                  <th
+                    data-col="2"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="Precision (TP / (TP + FP))"
+                  >
+                    Precision
+                  </th>
+                  <th
+                    data-col="3"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="Recall (TP / (TP + FN))"
+                  >
+                    Recall
+                  </th>
+                  <th
+                    data-col="4"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="True positives"
+                  >
+                    TP
+                  </th>
+                  <th
+                    data-col="5"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="False positives"
+                  >
+                    FP
+                  </th>
+                  <th
+                    data-col="6"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="False negatives"
+                  >
+                    FN
+                  </th>
+                  <th
+                    data-col="7"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="Total emitted diagnostics"
+                  >
+                    Total
+                  </th>
+                  <th
+                    data-col="8"
+                    class="py-2 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors"
+                    title="Number of test files in this group"
+                  >
+                    Files
+                  </th>
                 </tr>
               </thead>
               <tbody id="breakdownBody" class="text-slate-200"></tbody>
@@ -102,6 +247,24 @@
       const BREAKDOWN_URL = "./breakdown_latest.json";
       const COMMIT_REPO_URL = "https://github.com/astral-sh/ruff";
 
+      function getPreferredTheme() {
+        const stored = localStorage.getItem("theme");
+        if (stored === "light" || stored === "dark") return stored;
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark";
+      }
+
+      function setTheme(theme, { persist } = { persist: true }) {
+        document.documentElement.dataset.theme = theme;
+        if (persist) {
+          localStorage.setItem("theme", theme);
+        }
+        const label = theme === "light" ? "Light" : "Dark";
+        const btn = document.getElementById("toggleTheme");
+        if (btn) btn.textContent = `Theme: ${label}`;
+      }
+
       function pct(value) {
         return value * 100;
       }
@@ -111,13 +274,21 @@
       }
 
       function baseLayout() {
+        const theme = document.documentElement.dataset.theme || "dark";
+        const light = theme === "light";
         return {
           paper_bgcolor: "rgba(0,0,0,0)",
           plot_bgcolor: "rgba(0,0,0,0)",
-          font: { color: "#e2e8f0" },
+          font: { color: light ? "#0f172a" : "#e2e8f0" },
           margin: { l: 55, r: 20, t: 10, b: 40 },
-          xaxis: { gridcolor: "#1f2937", tickcolor: "#334155" },
-          yaxis: { gridcolor: "#1f2937", tickcolor: "#334155" },
+          xaxis: {
+            gridcolor: light ? "#e2e8f0" : "#1f2937",
+            tickcolor: light ? "#cbd5e1" : "#334155",
+          },
+          yaxis: {
+            gridcolor: light ? "#e2e8f0" : "#1f2937",
+            tickcolor: light ? "#cbd5e1" : "#334155",
+          },
           legend: { orientation: "h", y: 1.13, x: 0 },
         };
       }
@@ -131,6 +302,23 @@
       }
 
       async function main() {
+        // Theme
+        setTheme(getPreferredTheme(), { persist: false });
+        const themeButton = document.getElementById("toggleTheme");
+        if (themeButton) {
+          themeButton.addEventListener("click", async () => {
+            const cur = document.documentElement.dataset.theme || "dark";
+            const next = cur === "dark" ? "light" : "dark";
+            setTheme(next, { persist: true });
+            try {
+              await Plotly.relayout("chart_metrics", baseLayout());
+              await Plotly.relayout("chart_runtime", baseLayout());
+            } catch {
+              // Charts may not be mounted yet.
+            }
+          });
+        }
+
         const response = await fetch(DATA_URL, { cache: "no-store" });
         if (!response.ok) {
           throw new Error(`Failed to load ${DATA_URL}: ${response.status} ${response.statusText}`);
@@ -209,7 +397,10 @@
             line: { width: 2 },
           },
         ];
-        const runtimeLayout = { ...baseLayout(), yaxis: { ...baseLayout().yaxis, title: "seconds" } };
+        const runtimeLayout = {
+          ...baseLayout(),
+          yaxis: { ...baseLayout().yaxis, title: "seconds" },
+        };
         await Plotly.newPlot("chart_runtime", runtimeTraces, runtimeLayout, { responsive: true });
 
         const openCommit = (ev) => {
@@ -246,7 +437,83 @@
           const filter = document.getElementById("breakdownFilter");
 
           const fmtPct = (x, denom) => (denom > 0 ? `${(x * 100).toFixed(2)}%` : "—");
-          const fmtNum = (x) => String(x ?? 0);
+          const fmtInt = (x) => (x ?? 0).toLocaleString();
+
+          const COL_CLASS = "col-highlight";
+          const ROW_CLASS = "row-highlight";
+          const HEAD_CLASS = "head-highlight";
+          const CELL_CLASS = "cell-highlight";
+
+          const clearHoverState = () => {
+            const table = tbody.closest("table");
+            if (!table) return;
+            table.querySelectorAll("." + COL_CLASS).forEach((el) => el.classList.remove(COL_CLASS));
+            table.querySelectorAll("." + HEAD_CLASS).forEach((el) => el.classList.remove(HEAD_CLASS));
+            table.querySelectorAll("." + ROW_CLASS).forEach((el) => el.classList.remove(ROW_CLASS));
+            table.querySelectorAll("." + CELL_CLASS).forEach((el) => el.classList.remove(CELL_CLASS));
+          };
+
+          const ensureHoverHandlers = (() => {
+            let wired = false;
+            return () => {
+              if (wired) return;
+              wired = true;
+
+              const table = tbody.closest("table");
+              if (!table) return;
+
+              let lastCol = null;
+              let lastRow = null;
+              let lastCell = null;
+
+              const applyCol = (col) => {
+                if (col === null) return;
+                tbody
+                  .querySelectorAll(`td[data-col="${col}"]`)
+                  .forEach((el) => el.classList.add(COL_CLASS));
+                table.querySelectorAll(`thead [data-col="${col}"]`).forEach((el) => el.classList.add(HEAD_CLASS));
+              };
+
+              const clearCol = (col) => {
+                if (col === null) return;
+                tbody
+                  .querySelectorAll(`td[data-col="${col}"]`)
+                  .forEach((el) => el.classList.remove(COL_CLASS));
+                table.querySelectorAll(`thead [data-col="${col}"]`).forEach((el) => el.classList.remove(HEAD_CLASS));
+              };
+
+              tbody.addEventListener("mousemove", (ev) => {
+                const cell = ev.target.closest("td");
+                if (!cell) return;
+
+                const col = cell.getAttribute("data-col");
+                const row = cell.parentElement;
+
+                if (lastCell && lastCell !== cell) lastCell.classList.remove(CELL_CLASS);
+                cell.classList.add(CELL_CLASS);
+                lastCell = cell;
+
+                if (lastRow && lastRow !== row) lastRow.classList.remove(ROW_CLASS);
+                row.classList.add(ROW_CLASS);
+                lastRow = row;
+
+                if (lastCol !== col) {
+                  clearCol(lastCol);
+                  applyCol(col);
+                  lastCol = col;
+                }
+              });
+
+              tbody.addEventListener("mouseleave", () => {
+                if (lastCell) lastCell.classList.remove(CELL_CLASS);
+                if (lastRow) lastRow.classList.remove(ROW_CLASS);
+                clearCol(lastCol);
+                lastCol = null;
+                lastRow = null;
+                lastCell = null;
+              });
+            };
+          })();
 
           function render() {
             const q = (filter.value ?? "").trim().toLowerCase();
@@ -256,25 +523,27 @@
               return !q || g.includes(q) || n.includes(q);
             });
 
+            clearHoverState();
             tbody.innerHTML = "";
             for (const r of filtered) {
               const m = r.metrics;
               const groupLabel = r.name ? `${r.group} — ${r.name}` : r.group;
               const linkStart = r.href ? `<a class="text-sky-300 hover:text-sky-200 underline" href="${r.href}" target="_blank" rel="noopener noreferrer">` : "";
               const linkEnd = r.href ? `</a>` : "";
+              const f1Denom = (2 * m.true_positives) + m.false_positives + m.false_negatives;
 
               const tr = document.createElement("tr");
-              tr.className = "border-b border-slate-900/60";
+              tr.className = "border-b border-slate-900/60 transition-colors hover:bg-slate-900/30";
               tr.innerHTML = `
-                <td class="py-2 pr-4 whitespace-nowrap">${linkStart}${groupLabel}${linkEnd}</td>
-                <td class="py-2 pr-4 font-medium">${fmtPct(m.f1, m.precision_denom + m.false_negatives)}</td>
-                <td class="py-2 pr-4">${fmtPct(m.precision, m.precision_denom)}</td>
-                <td class="py-2 pr-4">${fmtPct(m.recall, m.recall_denom)}</td>
-                <td class="py-2 pr-4">${fmtNum(m.true_positives)}</td>
-                <td class="py-2 pr-4">${fmtNum(m.false_positives)}</td>
-                <td class="py-2 pr-4">${fmtNum(m.false_negatives)}</td>
-                <td class="py-2 pr-4">${fmtNum(m.total_diagnostics)}</td>
-                <td class="py-2 pr-4">${fmtNum(r.test_files)}</td>
+                <td data-col="0" class="py-2 pr-4 whitespace-nowrap transition-colors">${linkStart}${groupLabel}${linkEnd}</td>
+                <td data-col="1" class="py-2 pr-4 text-right font-medium tabular-nums transition-colors">${fmtPct(m.f1, f1Denom)}</td>
+                <td data-col="2" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtPct(m.precision, m.precision_denom)}</td>
+                <td data-col="3" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtPct(m.recall, m.recall_denom)}</td>
+                <td data-col="4" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtInt(m.true_positives)}</td>
+                <td data-col="5" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtInt(m.false_positives)}</td>
+                <td data-col="6" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtInt(m.false_negatives)}</td>
+                <td data-col="7" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtInt(m.total_diagnostics)}</td>
+                <td data-col="8" class="py-2 pr-4 text-right tabular-nums transition-colors">${fmtInt(r.test_files)}</td>
               `;
               tbody.appendChild(tr);
             }
@@ -285,6 +554,8 @@
             } else {
               empty.classList.add("hidden");
             }
+
+            ensureHoverHandlers();
           }
 
           filter.addEventListener("input", render);

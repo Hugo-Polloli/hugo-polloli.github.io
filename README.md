@@ -11,8 +11,7 @@ Replace `typing_conformance.json` with a new JSON list, then push to `main`.
 From this repo directory:
 
 ```bash
-python3 -m http.server 8000
+uv run -p 3.12 -- python -m http.server 8000
 ```
 
 Then open <http://localhost:8000>.
-
